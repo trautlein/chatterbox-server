@@ -69,15 +69,16 @@ var handler = function(request, response) {
         objectId: hash
       };
       baseObj.results.unshift(dataObj);
-      console.log(baseObj);
       response.statusCode = 201;
+      response.writeHead(response.statusCode, headers);
       response.end();
     });
     request.on('error', function(err) {
       console.log(err.stack);
     });
   } else if (request.method === 'GET') {
-    response.statusCode = 200;
+    //response.statusCode = 200;
+    response.writeHead(200, headers);
     response.end(JSON.stringify(baseObj));
   } else if (request.method === 'OPTIONS') {
     response.writeHead(200, headers);
@@ -113,4 +114,4 @@ var handler = function(request, response) {
 };
 
 
-exports.handler = handler;
+exports.requestHandler = handler;
