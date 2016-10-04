@@ -11,7 +11,7 @@ var waitForThen = function (test, cb) {
 };
 
 describe('Node Server Request Listener Function', function() {
-  it('Should answer GET requests for /classes/messages with a 200 status code', function() {
+  it('1. Should answer GET requests for /classes/messages with a 200 status code', function() {
     // This is a fake server request. Normally, the server would provide this,
     // but we want to test our function's behavior totally independent of the server code
     var req = new stubs.request('/classes/messages', 'GET');
@@ -23,7 +23,7 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
-  it('Should send back parsable stringified JSON', function() {
+  it('2. Should send back parsable stringified JSON', function() {
     var req = new stubs.request('/classes/messages', 'GET');
     var res = new stubs.response();
 
@@ -33,7 +33,7 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
-  it('Should send back an object', function() {
+  it('3. Should send back an object', function() {
     var req = new stubs.request('/classes/messages', 'GET');
     var res = new stubs.response();
 
@@ -44,7 +44,7 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
-  it('Should send an object containing a `results` array', function() {
+  it('4. Should send an object containing a `results` array', function() {
     var req = new stubs.request('/classes/messages', 'GET');
     var res = new stubs.response();
 
@@ -56,7 +56,7 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
-  it('Should accept posts to /classes/room', function() {
+  it('5. Should accept posts to /classes/room', function() {
     var stubMsg = {
       username: 'Jono',
       message: 'Do my bidding!'

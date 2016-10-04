@@ -1,16 +1,11 @@
 var qs = require('query-string');
 /*************************************************************
-
 You should implement your request handler function in this file.
-
 requestHandler is already getting passed to http.createServer()
 in basic-server.js, but it won't work as is.
-
 You'll have to figure out a way to export this function from
 this file and include it in basic-server.js so that it actually works.
-
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
-
 **************************************************************/
 
 
@@ -36,8 +31,8 @@ var baseObj = {
   results: []
 };
 
-
 module.exports = function(request, response) {
+  
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -53,8 +48,10 @@ module.exports = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  // The outgoing status.
+  var statusCode = 200;
 
-
+  var headers = defaultCorsHeaders;
 
   if (request.method === 'POST') {
     request.on('data', function(data) {
@@ -62,36 +59,42 @@ module.exports = function(request, response) {
       var hash = Math.random();
       var date = new Date();
       var dataObj = {
-        message: sentData.text,
+        text: sentData.text,
         username: sentData.username,
         createdAt: date,
         objectId: hash
       };
       baseObj.results.unshift(dataObj);
       console.log(baseObj);
+      statusCode = 201;
+      response.writeHead(statusCode, headers);
+    });
+    request.on('error', function(err) {
+      console.log(err.stack);
     });
 
   }
   
-  // The outgoing status.
-  var statusCode = 200;
 
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = 'text/plain';
+
+
   if (request.method === 'GET') {
     // send it baseObj;
+
     response.writeHead(statusCode, headers);
     response.end(JSON.stringify(baseObj));
   }
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
+
   response.writeHead(statusCode, headers);
 
   // Make sure to always call response.end() - Node may not send
