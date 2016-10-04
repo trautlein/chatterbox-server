@@ -1,4 +1,6 @@
 // var qs = require('query-string');
+var url = require('url');
+var http = require('http');
 /*************************************************************
 You should implement your request handler function in this file.
 requestHandler is already getting passed to http.createServer()
@@ -49,11 +51,13 @@ var handler = function(request, response) {
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   // The outgoing status.
-  var statusCode = 200;
 
   var headers = defaultCorsHeaders;
 
-  if (request.method === 'POST') {
+  if (request.url !== '/classes/messages') {
+    response.statusCode = 404;
+    response.end();
+  } else if (request.method === 'POST' ) {
     request.on('data', function(data) {
       var sentData = JSON.parse(data);
       var hash = Math.random();
@@ -66,13 +70,22 @@ var handler = function(request, response) {
       };
       baseObj.results.unshift(dataObj);
       console.log(baseObj);
-      response.writeHead(201, {'Content-Type': 'text/event-stream'});
+      response.statusCode = 201;
       response.end();
     });
     request.on('error', function(err) {
       console.log(err.stack);
     });
-
+  } else if (request.method === 'GET') {
+    response.statusCode = 200;
+    response.end(JSON.stringify(baseObj));
+  } else if (request.method === 'OPTIONS') {
+    response.writeHead(200, headers);
+    response.end();
+  } else {
+    console.log('should 404');
+    response.statusCode = 404;
+    response.end();
   }
   
 
@@ -83,14 +96,6 @@ var handler = function(request, response) {
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
   // headers['Content-Type'] = 'text/plain';
-
-
-  if (request.method === 'GET') {
-    // send it baseObj;
-
-    response.writeHead(statusCode, headers);
-    response.end(JSON.stringify(baseObj));
-  }
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
