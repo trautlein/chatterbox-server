@@ -22,7 +22,7 @@
 
 app = {
 
-  server: 'http://127.0.0.1:3000/classes/messages/',
+  server: 'http://127.0.0.1:3000/classes/messages',
 
   init: function() {
     // Get username
@@ -34,7 +34,7 @@ app = {
     app.$text = $('#message');
 
     app.loadMsgs();
-    setInterval (app.loadMsgs.bind(app), 5000);
+    setInterval (app.loadMsgs.bind(app), 1000);
 
     $('#send').on('submit', app.handleSubmit);
   },
@@ -79,8 +79,8 @@ app = {
       /*data: { order: '-createdAt' },*/
       contentType: 'application/json',
       success: function(json) {
+        console.log(json);
         var results = JSON.parse(json).results;
-        // console.log(results);
         app.displayMessages(results);
       },
       complete: function() {

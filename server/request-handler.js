@@ -27,8 +27,6 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
-var allMessages = [];
-
 var baseObj = {
   results: []
 };
@@ -54,8 +52,10 @@ var handler = function(request, response) {
 
   var headers = defaultCorsHeaders;
 
+  response.writeHead(200, headers);
+
   if (request.url !== '/classes/messages') {
-    response.statusCode = 404;
+    response.writeHead(404, headers);
     response.end();
   } else if (request.method === 'POST' ) {
     request.on('data', function(data) {
@@ -77,15 +77,13 @@ var handler = function(request, response) {
       console.log(err.stack);
     });
   } else if (request.method === 'GET') {
-    //response.statusCode = 200;
     response.writeHead(200, headers);
     response.end(JSON.stringify(baseObj));
   } else if (request.method === 'OPTIONS') {
     response.writeHead(200, headers);
     response.end();
   } else {
-    console.log('should 404');
-    response.statusCode = 404;
+    response.writeHead(404, headers);
     response.end();
   }
   
@@ -113,5 +111,5 @@ var handler = function(request, response) {
   // response.end('Hello, World!');
 };
 
-
 exports.requestHandler = handler;
+
