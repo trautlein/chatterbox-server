@@ -1,6 +1,7 @@
 // var qs = require('query-string');
 var url = require('url');
 var http = require('http');
+var fs = require('fs');
 /*************************************************************
 You should implement your request handler function in this file.
 requestHandler is already getting passed to http.createServer()
@@ -68,15 +69,44 @@ var handler = function(request, response) {
         createdAt: date,
         objectId: hash
       };
+      //write to file
+      /*fs.appendFile('messageData.txt', ',' + JSON.stringify(dataObj), function(error) {
+        if (error) {
+          throw error;
+        }
+        console.log('data appended');
+      });*/
+      var serverData = fs.readFileSync('messageData.txt', 'utf-8'); //read existing contents into data
+      console.log(serverData);
+      var fd = fs.openSync('messageData.txt', 'w+');
+      var buffer = JSON.stringify(dataObj);
+      fs.writeSync(fd, buffer + ',', 0, buffer.length + 1); //write new data
+      fs.writeSync(fd, serverData, buffer.length + 1, serverData.length); //append old data
+      //or fs.appendFile(fd, data);
+      fs.close(fd);
+
       baseObj.results.unshift(dataObj);
       response.statusCode = 201;
       response.writeHead(response.statusCode, headers);
+
       response.end();
     });
     request.on('error', function(err) {
       console.log(err.stack);
     });
   } else if (request.method === 'GET') {
+    //read from file
+
+    /*fs.readFile('messageData.txt', function(error, readData) {
+      if (error) {
+        throw error;
+      }
+      var stringToSend = '{"response": [' + readData.slice(0, readData.length - 1) + ']}';
+      console.log('stringified', stringToSend);
+      response.end(stringToSend);
+    });*/
+
+
     response.writeHead(200, headers);
     response.end(JSON.stringify(baseObj));
   } else if (request.method === 'OPTIONS') {
